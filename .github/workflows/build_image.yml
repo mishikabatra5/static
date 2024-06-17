@@ -39,7 +39,7 @@ jobs:
         run: docker build -t "${{ inputs.repo_base_name }}/${{ inputs.repo_name }}:${{ github.sha }}" .
 
       - name: Tag Docker image with commit SHA
-        run: docker tag "${{ inputs.repo_base_name }}/${{ inputs.repo_name }}:${{ github.sha }}" "${{ inputs.repo_base_name }}/${{ inputs.repo_name }}"
+        run: docker tag "${{ inputs.repo_base_name }}/${{ inputs.repo_name }}:${{ github.sha }}" "${{ inputs.repo_base_name }}/${{ inputs.repo_name }}:latest"
 
       - name: Push Docker images
         run: docker push "${{ inputs.repo_base_name }}/${{ inputs.repo_name }}:${{ github.sha }}"
