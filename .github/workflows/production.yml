@@ -8,6 +8,7 @@ on:
 jobs:
   trigger-build:
     uses: ./.github/workflows/build_image.yml
+    secrets: inherit
     with:
       repo_base_name: mishikabatra
       repo_name: production
