@@ -1,9 +1,27 @@
 name: Build and Push Docker Image
 
 on:
-  push:
-    branches:
-      - main  # Adjust as needed based on your default branch name
+  workflow_call:
+    inputs:
+      repo_base_name:
+        description: 'Base name of the repository'
+        required: true
+        type: string
+      repo_name:
+        description: 'Name of the repository'
+        required: true
+        type: string
+      branch_name:
+        description: 'Name of the branch'
+        required: true
+        type: string
+    secrets:
+      docker_username:
+        description: 'Docker Hub username'
+        required: true
+      docker_password:
+        description: 'Docker Hub password'
+        required: true
 
 jobs:
   build-and-push:
@@ -13,11 +31,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Build and push Docker image
-        env:
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
-        run: |
-          docker build -t mishikabatra/static-image:latest .
-          docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD
-          docker push your-dockerhub-username/static-image:latest
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.docker_password }}" | docker login -u "${{ secrets.docker_username }}" --password-stdin
+
+      - name: Build Docker image
+        run: docker build -t "${{ inputs.repo_base_name }}/${{ inputs.repo_name }}:${{ github.sha }}" .
+
+      - name: Tag Docker image with commit SHA
+        run: docker tag "${{ inputs.repo_base_name }}/${{ inputs.repo_name }}:${{ github.sha }}" "${{ inputs.repo_base_name }}/${{ inputs.repo_name }}:latest"
+
+      - name: Push Docker images
+        run: docker push "${{ inputs.repo_base_name }}/${{ inputs.repo_name }}:${{ github.sha }}"
