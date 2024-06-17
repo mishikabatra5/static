@@ -1,20 +1,17 @@
-name: Deploy to Staging
+name: Deploy to stage
 
 on:
   push:
     branches:
-      - staging
+      - stage
 
-jobs: 
-  trigger-build: 
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Trigger build and push to Docker Hub
-        uses: ./.github/workflows/build_image.yml
-        with:
-          REPO_NAME: stage
-          REPO_BASE_NAME: mishikabatra
-          BRANCH_NAME: staging
-          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
-          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+jobs:
+  trigger-build:
+    uses: ./.github/workflows/build_image.yml
+    with:
+      repo_base_name: mishikabatra
+      repo_name: stage
+      branch_name: stage
+    secrets:
+      docker_username: ${{ secrets.DOCKER_USERNAME }}
+      docker_password: ${{ secrets.DOCKER_PASSWORD }}
