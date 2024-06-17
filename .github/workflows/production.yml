@@ -1,0 +1,20 @@
+name: Deploy to Production
+
+on:
+  push:
+    branches:
+      - production 
+
+jobs:
+  trigger-build:
+    runs-on: ubuntu-latest 
+ 
+    steps:
+      - name: Trigger build and push to Docker Hub
+        uses: ./.github/workflows/build_image.yml
+        with:
+          REPO_NAME: production
+          REPO_BASE_NAME: mishikabatra
+          BRANCH_NAME: production
+          DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
+          DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
